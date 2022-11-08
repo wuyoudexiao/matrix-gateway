@@ -1,0 +1,28 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: matrix-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: matrix
+          uri: https://matrix.seu.edu.cn
+          predicates:
+            - Path=/**
+            - Method=GET
+
+
+cas:
+  enable: true
+  login-url: /api/cas/login
+  ignore-pattern: /api/cas/call-back|/api/cas/login|/api/swagger.*|/api/webjar.*|/api/v2.*
+  server-url-prefix: https://auth.seu.edu.cn/cas
+  server-login-url: https://auth.seu.edu.cn/dist/#/dist/main/login
+  server-logout-url: https://auth.seu.edu.cn/dist/#/dist/logOut?redirectUrl=http://127.0.0.1:8080/
+  client-host-url: http://127.0.0.1:8080
+  call-back-url: http://127.0.0.1/api/cas/call-back?url=
+  use-session: true
+  validation-type: cas
+  whitelist: /js/*|/img/*|/view/*|/css/*
+  filterlist: /api/cas/ids

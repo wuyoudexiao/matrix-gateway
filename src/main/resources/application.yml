@@ -7,22 +7,19 @@ spring:
     gateway:
       routes:
         - id: matrix
-          uri: https://matrix.seu.edu.cn
+          uri: http://localhost:6900
           predicates:
             - Path=/**
-            - Method=GET
 
+  redis:
+    host: 10.64.40.226
+    port: 6379
+    password: SrpApp_123
+    database: 0
 
 cas:
-  enable: true
-  login-url: /api/cas/login
-  ignore-pattern: /api/cas/call-back|/api/cas/login|/api/swagger.*|/api/webjar.*|/api/v2.*
-  server-url-prefix: https://auth.seu.edu.cn/cas
-  server-login-url: https://auth.seu.edu.cn/dist/#/dist/main/login
-  server-logout-url: https://auth.seu.edu.cn/dist/#/dist/logOut?redirectUrl=http://127.0.0.1:8080/
-  client-host-url: http://127.0.0.1:8080
-  call-back-url: http://127.0.0.1/api/cas/call-back?url=
-  use-session: true
-  validation-type: cas
-  whitelist: /js/*|/img/*|/view/*|/css/*
-  filterlist: /api/cas/ids
+  casServiceUrl: https://auth.seu.edu.cn/cas
+  casServerLoginUrl: https://auth.seu.edu.cn/dist/#/dist/main/login
+  serverName: http://127.0.0.1:8080
+  whiteUrl: /api/cas/call-back|/api/cas/login|/api/swagger.*|/api/webjar.*|/api/v2.*
+

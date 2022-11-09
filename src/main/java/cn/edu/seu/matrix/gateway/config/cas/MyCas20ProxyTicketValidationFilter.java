@@ -6,15 +6,11 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 public class MyCas20ProxyTicketValidationFilter implements GlobalFilter, Ordered {
-
-    protected  Cas20ServiceTicketValidator defaultServiceTicketValidator;
-
     protected TicketValidator ticketValidator;
 
     protected Protocol protocol;
@@ -24,8 +20,7 @@ public class MyCas20ProxyTicketValidationFilter implements GlobalFilter, Ordered
     public MyCas20ProxyTicketValidationFilter(CasClientConfig casClientConfig) {
         this.casClientConfig=casClientConfig;
         this.protocol=Protocol.CAS2;
-        this.defaultServiceTicketValidator = new Cas20ServiceTicketValidator(casClientConfig.casServiceUrl);
-        this.ticketValidator = new Cas30ServiceTicketValidator(casClientConfig.casServiceUrl+casClientConfig.casContextPath);
+        this.ticketValidator = new Cas20ServiceTicketValidator(casClientConfig.casServiceUrl);
     }
 
     @Override
@@ -39,11 +34,6 @@ public class MyCas20ProxyTicketValidationFilter implements GlobalFilter, Ordered
         }else {
             try {
                 Assertion assertion=ticketValidator.validate(ticket, constructServiceUrl(request));
-                Object authId = request.getCookies().get(casClientConfig.authKey);
-                if(authId==null){
-                    //cookie为空跳转到认证服务器去认证
-                    return chain.filter(exchange);
-                }
                 return exchange.getSession().flatMap(
                         webSession -> {
                             webSession.getAttributes().put("_const_cas_assertion_", assertion);

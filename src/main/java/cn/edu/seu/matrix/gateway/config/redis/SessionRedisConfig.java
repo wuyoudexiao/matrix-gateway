@@ -5,7 +5,7 @@ import org.springframework.session.data.redis.config.annotation.web.server.Enabl
 
 
 @Configuration
-@EnableRedisWebSession(maxInactiveIntervalInSeconds = 1800,redisNamespace = "gateway:session")
+@EnableRedisWebSession(maxInactiveIntervalInSeconds = 1800,redisNamespace = "gateway")
 public class SessionRedisConfig {
 }
 

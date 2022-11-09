@@ -26,13 +26,8 @@ public class GatewayCommonUtils {
         return null;
     }
 
-
-
-
-
     //将访问的url进行编码后返回
     public static String constructServiceUrl(ServerHttpRequest request,  boolean encode,boolean ticketValidate) {
-
             //如果是验证ticket拼接url的话
             if(ticketValidate){
                 String url=request.getURI().toString();
@@ -48,7 +43,6 @@ public class GatewayCommonUtils {
                         if(!"ticket".equals(key)){
                             stringBuilder.append(key).append("=").append(params.getFirst(key)).append("&");
                         }
-
                     }
                     return stringBuilder.substring(0,stringBuilder.length()-1);
                 }else {
@@ -56,7 +50,7 @@ public class GatewayCommonUtils {
                 }
             }
             //如果不是验证ticketurl
-        return encode ? URLEncoder.encode(request.getURI().toString()) : request.getURI().toString();
+            return encode ? URLEncoder.encode(request.getURI().toString()) : request.getURI().toString();
     }
 
     //获取客户端部署地址，并加入host做判断逻辑处理

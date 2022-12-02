@@ -6,16 +6,18 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: matrix
-          uri: http://localhost:6900
+        - id: test
+          uri: https://matrix.seu.edu.cn
           predicates:
-            - Path=/**
+            - Path=/api/**
 
   redis:
     host: 10.64.40.226
     port: 6379
     password: SrpApp_123
     database: 0
+
+
 
 cas:
   casServiceUrl: https://auth.seu.edu.cn/cas

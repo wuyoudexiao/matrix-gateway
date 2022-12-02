@@ -15,6 +15,8 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,7 +51,7 @@ public class AuthenticationGatewayFilter implements GlobalFilter, Ordered {
         if (this.ignoreUrlPatternMatcherStrategyClass == null) {
             return false;
         } else {
-            StringBuffer urlBuffer = new StringBuffer(request.getURI().toString());
+            StringBuilder urlBuffer = new StringBuilder(request.getURI().toString());
             if (request.getURI().getQuery() != null) {
                 urlBuffer.append("?").append(request.getURI().getQuery());
             }
@@ -58,7 +60,6 @@ public class AuthenticationGatewayFilter implements GlobalFilter, Ordered {
             return this.ignoreUrlPatternMatcherStrategyClass.matches(requestUri);
         }
     }
-
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -70,15 +71,25 @@ public class AuthenticationGatewayFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
         //从已经登录的容器中获取登录信息
-        Assertion assertion = exchange.getAttribute("_const_cas_assertion_");
-        //如果已经存在登录信息应用之前已经登录，直接跳过
-        if (assertion != null) {
-            return chain.filter(exchange);
-        } else {
-            //如果没有验证过ticket，说明还未登录过，报302
-            response.setStatusCode(HttpStatus.valueOf(302));
-            return response.setComplete();
-        }
+        return exchange.getSession().flatMap(
+                webSession -> {
+                    Assertion assertion = (Assertion) webSession.getAttributes().get("_const_cas_assertion_");
+                    if (assertion != null) {
+                        //把新的 exchange放回到过滤链
+                        try {
+                            Map<String, Object> attributes = assertion.getAttributes();
+                            return chain.filter(exchange.mutate().request(exchange.getRequest().mutate().header("UserId", "123123").header("UserName", URLEncoder.encode("吴星灿", "UTF-8")).build()).build());
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                            response.setStatusCode(HttpStatus.valueOf(302));
+                            return response.setComplete();
+                        }
+                    } else {
+                        //如果没有验证过ticket，说明还未登录过，报302
+                        response.setStatusCode(HttpStatus.valueOf(302));
+                        return response.setComplete();
+                    }
+                });
     }
 
     @Override

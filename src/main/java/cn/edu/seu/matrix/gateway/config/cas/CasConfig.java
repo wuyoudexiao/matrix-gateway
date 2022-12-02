@@ -19,9 +19,5 @@ public class CasConfig {
         return new AuthenticationGatewayFilter(casClientConfig);
     }
 
-    @Bean
-    public MyCas20ProxyTicketValidationFilter myCas20ProxyTicketValidationFilter(){
-        return new MyCas20ProxyTicketValidationFilter(casClientConfig);
-    }
 
 }

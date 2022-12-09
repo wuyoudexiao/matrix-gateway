@@ -19,33 +19,33 @@ import java.util.stream.Collectors;
 @Configuration
 @EnableRedisWebSession(maxInactiveIntervalInSeconds = 1800,redisNamespace = "gateway")
 public class SessionRedisConfig {
-//    @Bean
-//    public WebSessionIdResolver webSessionIdResolver() {
-//        return new CustomWebSessionIdResolver();
-//    }
+    @Bean
+    public WebSessionIdResolver webSessionIdResolver() {
+        return new CustomWebSessionIdResolver();
+    }
 
-//    private static class CustomWebSessionIdResolver extends CookieWebSessionIdResolver {
-//        // 重写resolve方法 对SESSION进行base64解码
-//        @Override
-//        public List<String> resolveSessionIds(ServerWebExchange exchange) {
-//            MultiValueMap<String, HttpCookie> cookieMap = exchange.getRequest().getCookies();
-//            // 获取SESSION
-//            List<HttpCookie> cookies = cookieMap.get(getCookieName());
-//            if (cookies == null) {
-//                return Collections.emptyList();
-//            }
-//            return cookies.stream().map(HttpCookie::getValue).map(this::base64Decode).collect(Collectors.toList());
-//        }
-//
-//        private String base64Decode(String base64Value) {
-//            try {
-//                byte[] decodedCookieBytes = Base64.getDecoder().decode(base64Value);
-//                return new String(decodedCookieBytes);
-//            } catch (Exception ex) {
-//                log.debug("Unable to Base64 decode value: " + base64Value);
-//                return null;
-//            }
-//        }
-//    }
+    private static class CustomWebSessionIdResolver extends CookieWebSessionIdResolver {
+        // 重写resolve方法 对SESSION进行base64解码
+        @Override
+        public List<String> resolveSessionIds(ServerWebExchange exchange) {
+            MultiValueMap<String, HttpCookie> cookieMap = exchange.getRequest().getCookies();
+            // 获取SESSION
+            List<HttpCookie> cookies = cookieMap.get(getCookieName());
+            if (cookies == null) {
+                return Collections.emptyList();
+            }
+            return cookies.stream().map(HttpCookie::getValue).map(this::base64Decode).collect(Collectors.toList());
+        }
+
+        private String base64Decode(String base64Value) {
+            try {
+                byte[] decodedCookieBytes = Base64.getDecoder().decode(base64Value);
+                return new String(decodedCookieBytes);
+            } catch (Exception ex) {
+                log.debug("Unable to Base64 decode value: " + base64Value);
+                return null;
+            }
+        }
+    }
 }
 

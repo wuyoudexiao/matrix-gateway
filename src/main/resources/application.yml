@@ -11,11 +11,6 @@ spring:
           predicates:
             - Path=/api/**
 
-  redis:
-    host: 10.64.40.226
-    port: 6379
-    password: SrpApp_123
-    database: 0
 
 
 
